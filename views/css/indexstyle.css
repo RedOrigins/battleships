@@ -1,0 +1,42 @@
+.index-frame{
+  width: 280px;
+	
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  /*border: 1px solid #ffffff;*/
+  /*padding: 8px;*/
+
+  transform: translate(-50%, -50%);
+
+  color: #ffffff;
+}
+
+.index-frame h1{
+  float: right;
+
+  font-size: 35px;
+
+
+  border-bottom: 7px solid #b30000;
+
+	
+
+}
+
+.index-frame h2{
+
+	float: right;
+	
+	margin: 16px;
+	
+
+	
+
+	font-size: 35px;
+
+	border-bottom: 7px solid #b30000;
+
+}

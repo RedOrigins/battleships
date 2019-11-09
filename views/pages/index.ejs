@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset = "utf-8">
+    <title> Home </title>
+    <link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/indexstyle.css">
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script>
+	$(document).ready(function(){
+        $("#mvRegisterBtn").click(function(){
+	        window.location.href='/register'
+        });
+        $("#mvPlayBtn").click(function(){
+	        window.location.href='/play'
+        });
+		if('<%= username %>' === "") {
+            $("#mvLoginBtn").click(function() {
+                window.location.href = '/login';
+            });
+            $("#usernameDisplay").remove();
+            $("#mvPlayBtn").remove();
+        } else {
+            $("#mvRegisterBtn").remove();
+            $("#mvLoginBtn").text('Logout');
+            $("#mvLoginBtn").click(function(){
+                $.get("/logout", function() {
+                    window.location.reload();
+                });
+            });
+        }
+	});
+	</script>
+</head>
+<body>
+	<div class ="headerBox">
+		<a class="index">Board.Ships() </a>
+		<h2 id="usernameDisplay">User: <%= username %></h2>
+	</div>
+    <div class = "index-frame">
+      	<h1> Battleships </h1>
+		<a id="mvLoginBtn"    class ="new-frame" type="button">Login</a>
+		<a id="mvRegisterBtn" class ="new-frame" type="button">New Account</a>
+		<a id="mvPlayBtn"     class ="new-frame" type="button">Play</a>		 
+    </div>
+</body>
+</html>

@@ -1,0 +1,43 @@
+body {
+	height: 100% !important;
+
+}
+
+.play-frame{
+	width: 80rem;
+	height: 70%;
+	
+	position: relative;
+	top: 10%;
+	left: 50%;
+	
+
+  /*border: 1px solid #ffffff;*/
+  /*padding: 8px;*/
+
+  
+	border-left: 0.2rem solid #b30000;
+	
+
+
+	background: #070707;
+  color: #ffffff;
+
+	transform: translate(-50%, -50%);
+	
+
+}
+
+.play-frame h1{
+	
+	position: absolute;
+	top: 5%;
+	left: 5%;
+
+  font-size: 32px;
+
+  border-bottom: 5px solid #b30000;
+
+	
+
+}

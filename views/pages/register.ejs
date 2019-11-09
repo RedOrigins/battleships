@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset = "utf-8">
+    <title> Sign-Up </title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/signupstyle.css">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        $("#submit-btn").click(function() {
+            uName = $("#uNameInp").val();
+            uPass = $("#uPassInp").val();
+            uPassRe = $("#uPassReInp").val();
+            if (uPass === uPassRe) {
+                $.post("/register",{username: uName, password: uPass}, function(data) {
+                    if (data === "error") {
+                        console.log("Error registering account");
+                    } else {
+                        $.post("/login", {username: uName, password: uPass}, function() {
+                            window.location.href = '/';
+                        })
+                    }
+                }); 
+            } else {
+                console.log("Passwords do not match!");
+            }
+            
+        });
+        $("#submit-frame-login").click(function() {
+            window.location.href = './login';
+        });
+    });
+    </script>
+</head>
+<body>
+    <div class="headerBox">
+        <a class="index" href="#">Board.Ships() </a>
+    </div>
+    <div class="signup-frame">
+        <h1>Sign-Up</h1> 
+        <a id=submit-frame-login type="button">Log-In</a>
+        <div class="text-box", id="usernameBox">
+        <input id="uNameInp" class="text-box-input" type="text" name="" value="" placeholder="Display Name" maxlength="18">
+    </div>
+    <div class="text-box" id="passwordBox">
+        <input id="uPassInp" class="text-box-input" type="password" name="" value="" placeholder="Password" maxlength="18">
+    </div>
+    <div class="text-box">
+        <input id="uPassReInp" class="text-box-input" type="password" name="" value="" placeholder="Repeat-Password" maxlength="18">
+    </div>
+        <input id="submit-btn" class="submit-frame-signup" type="submit" name="signUp" value="Create">
+    </div>
+</body>
+</html>

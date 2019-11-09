@@ -1,0 +1,113 @@
+
+.signup-frame{
+
+	width: 280px;
+
+	position: absolute;
+  top: 50%;
+  left: 50%;
+
+  
+  transform: translate(-50%, -50%);
+
+	color: #ffffff;
+
+}
+
+.signup-frame h1{
+	float: left;
+
+  font-size: 35px;
+
+
+  border-bottom: 7px solid #b30000
+
+
+}
+
+.submit-frame-signup{
+
+  width: 80%;
+
+
+  margin-left: 8px;
+
+	position:relative;
+	left: 10%;
+	
+
+  border: 1px solid #b30000;
+  background: none;
+  padding: 8px;
+  margin-top: 8px;
+  outline: none;
+
+  border-radius: 5px;
+
+  cursor: pointer;
+
+  color: #ffffff;
+
+	transition-duration: 500ms;
+
+
+}
+
+.submit-frame-signup:hover{
+
+  /*background: #b30000;*/
+  /*border-color: #ffffff;*/
+  background: #b30000;
+
+
+
+}
+
+#submit-frame-login{
+	width: 20%;
+
+
+  margin-left: 8px;
+	margin-right: 2px;
+	
+
+
+	float:right;
+	
+	
+	text-decoration: none;
+	font-size: 13px;
+	text-align: center;
+
+  border: 1px solid #b30000;
+  background: none;
+  padding: 8px;
+  margin-top: 8px;
+  outline: none;
+
+  border-radius: 5px;
+
+  cursor: pointer;
+
+  color: #ffffff;
+
+  transition-duration: 500ms !important;
+
+}
+
+#submit-frame-login:hover{
+	background: #b30000;
+
+}
+
+
+#usernameBox {
+	margin-bottom: 40px;
+
+	
+	
+
+}
+
+
+

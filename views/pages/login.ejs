@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset = "utf-8">
+    <title> Login </title>
+    <link rel = "stylesheet" href = "css/style.css">
+    <link rel = "stylesheet" href = "css/loginstyle.css">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        $("#loginBtn").click(function() {
+            uName = $("#uNameInp").val();
+            uPass = $("#uPassInp").val();
+            $.post("/login", {username:uName, password:uPass}, function(data) {
+                if (data === "No") {
+                    console.log("Incorrect Password");
+                } else if (data === "Error") {
+                    console.log("Unknown username.");
+                } else {
+                    window.location.href = '/';
+                }
+            });
+        });
+        $("#mvRegisterBtn").click(function(){
+            window.location.href='/register';
+        });
+        $("#mvHomeBtn").click(function(){
+            window.location.href='/';
+        });
+    });
+    </script>
+</head>
+<body>
+    <div class = "headerBox">
+        <a id="mvHomeBtn" class="index" href="#">Board.Ships() </a>
+    </div>
+    <div class = "login-frame">
+        <h1> Login to your Account </h1>
+        <div class="text-box">
+            <input id="uNameInp" class="text-box-input" type="text" name ="" value ="" placeholder="Username" maxlength="18"/>
+        </div>
+        <div class = "text-box">
+            <input id="uPassInp" class="text-box-input" type="password" name="" value="" placeholder="Password" maxlength="18"/>
+        </div>
+        <input id="loginBtn" class="submit-frame" type="submit" name="" value="Enter">     
+        <a id="mvRegisterBtn" class = "new-frame" type = "button">New Account</a>
+    </div>
+</body>
+</html>   
