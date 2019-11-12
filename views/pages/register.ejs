@@ -30,12 +30,15 @@
         $("#submit-frame-login").click(function() {
             window.location.href = './login';
         });
+        $("#mvHomeBtn").click(function(){
+            window.location.href='/';
+        });
     });
     </script>
 </head>
 <body>
     <div class="headerBox">
-        <a class="index" href="#">Board.Ships() </a>
+        <a id="mvHomeBtn" class="index" href="#">Board.Ships() </a>
     </div>
     <div class="signup-frame">
         <h1>Sign-Up</h1> 

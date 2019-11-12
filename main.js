@@ -13,7 +13,7 @@ const server = app.listen(3000);
 const io = socket(server);
 // Routing and sessions
 app.set('view engine', 'ejs')
-app.use(bodyParser.json());      
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 app.use(session({secret:"SausagePizzaRolls", saveUninitialized : true, resave : true}));
@@ -24,6 +24,7 @@ const userRepo = new UserRepository(dao);
 // Active Games Data
 var activeGames = [];
 const maxGames = 50;
+var gameIdCounter = 1;
 
 function createGameObject(id) {
     return {
@@ -93,7 +94,7 @@ io.use(function(socket, next) {
                 }
             }
         }
-        
+
         if (validGameId) {
             for (let i=0; i<activeGames.length; i++) {
                 if (activeGames[i].id == socket.handshake.query.gameId) {
@@ -106,15 +107,15 @@ io.use(function(socket, next) {
                     io.to(activeGames[i].joinerConnId).emit("place-ships",  "go");
                 }
             }
-        }  
+        }
     }
-    return next(); 
+    return next();
 });
 
 // Add socket event handlers
 
 io.sockets.on('connection', function(socket) {
-    
+
     // Demo of drawing within the game 'rooms'
     socket.on('mouse', function(data) {
         gameId = data.gameId;
@@ -125,7 +126,7 @@ io.sockets.on('connection', function(socket) {
             }
         }
     });
-    
+
     // Sent when all of the ships have been placed. Is in the form
     // { board : [[ array of board]], username: 'username', gameId : 16}
     socket.on('ships-placed', function(data) {
@@ -151,7 +152,7 @@ io.sockets.on('connection', function(socket) {
             }
         }
     });
-    
+
     // Sent when a player fires a shot.
     // Checks that it is that players turn, then compares the location of their shot
     // To the corrosponding shot in their opponents board
@@ -189,7 +190,7 @@ io.sockets.on('connection', function(socket) {
                             // remove game from active games array
                             activeGames.splice(i, 1);
                         }
-                        
+
 
                     } else {
                         // If the creator fires a shot at the joiner and misses
@@ -228,14 +229,9 @@ io.sockets.on('connection', function(socket) {
                     io.to(activeGames[i].creatorConnId).emit("shot-fired",  {x:data.tile.x, y:data.tile.y});
                     activeGames[i].currentTurn = "creator";
                 }
-                
-
-
-                
             }
         }
     });
-    
 });
 
 console.log("Server is running...");
@@ -259,10 +255,13 @@ app.get('/play', function(req, res) {
     } else {
         if (req.query.game) {
             // If 'game' param exists in URL. E.g. ip/play?game=10
-            res.render("pages/play", {username:req.session.username});
+            let username = req.session.username;
+            res.render("pages/play", {username:username});
         } else {
             // Game index page is game param doesn't exist
-            res.render("pages/play-index", {username:req.session.username});
+            let username = req.session.username;
+            let openGames = getOpenGames();
+            res.render("pages/playindex", {username:req.session.username, openGames: openGames});
         }
     }
 
@@ -293,7 +292,50 @@ app.post('/login', (req,res) => {
                 res.end(userInfo.username)
             }
         })
-})
+});
+
+// Creating a new game, returns the id of the new game
+app.get('/create', function(req, res) {
+    let gameID = getOpenGameId();
+    res.end(String(gameID));
+});
+
+function getOpenGames() {
+    let openGames = [];
+    for (let i=0; i<activeGames.length; i++) {
+        if (activeGames[i].joinerConnId == undefined) {
+            openGames.push(activeGames[i]);
+        }
+    }
+    return openGames;
+}
+
+function getOpenGameId() {
+    gameFound = false;
+    while (gameFound == false) {
+        idAvailable = true;
+        for (let i=0; i<activeGames.length; i++) {
+            if (activeGames[i].id == gameIdCounter) {
+                idAvailable = false;
+            }
+        }
+        if (idAvailable) {
+            gameFound = true;
+            returnGameId = gameIdCounter;
+            
+            gameIdCounter++;
+            if (gameIdCounter > maxGames) {
+                gameIdCounter = 1;
+            }
+            return returnGameId;
+        } else {
+            gameIdCounter++;
+            if (gameIdCounter > maxGames) {
+                gameIdCounter = 1;
+            }
+        }
+    }
+}
 
 // Ends the session
 app.get('/logout', (req, res) => {
@@ -322,7 +364,7 @@ function registerUser(user) {
                     register_date: ""}
 
     userData.register_date = registerDate;
-    
+
     return userRepo.createTable()
         .then(() => userRepo.create(userData))
         .catch((err) => {
@@ -340,6 +382,6 @@ function loginUser(user) {
         })
         .catch((err) => {
             return "Error"
-        })     
+        })
 }
 

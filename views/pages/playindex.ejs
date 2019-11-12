@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset = "utf-8">
+    <title> Nav </title>
+    <link rel = "stylesheet" href = "css/style.css">
+		<link rel = "stylesheet" href = "css/playindex.css">
+		<link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+		<script>
+		$(document).ready(function() {
+			$("#create-button").click(function() {
+				// Create game
+				$.get("/create", undefined, function(data) {
+					window.location.href = '/play?creator=true&game='+data;
+				});
+            });
+            for (let i=0; i<50; i++) {
+                $("#join-game-btn-"+String(i)).click(function() {
+                    window.location.href = '/play?game='+String(i);
+                })
+            }
+		});
+
+		</script>
+
+  </head>
+
+  <body>
+		<div class = "headerBox">
+			<a id = "index" href = "index.html">Board.Ships() </a>
+			<h2>User: <%= username %></h2>
+
+		</div>
+		
+		
+		<div id = "play-index-header">
+			<div class = "play-index-header-text" > 
+			Game
+			</div>
+			<div class = "play-index-header-text" > 
+			User
+			</div>
+			<div class = "play-index-header-text" > 
+			ID
+			</div>
+
+			<div id = "create-button" type = "button"> 
+			Create
+			</div>
+				
+		</div>
+
+    <div class = "play-index">
+			
+
+			<div class ="play-index-border"> 
+
+
+
+                <% openGames.forEach(function(game) { %>
+                    <div class = "play-index-item">
+                        <div class = "play-index-item-g play-index-item-2">
+                            <%= game.creatorName %>
+                        </div>
+                        <div class = "play-index-item-g play-index-item-3">
+                            <%= game.id %>
+                        </div>
+                        <div id = "join-game-btn-<%= game.id %>" class = "play-index-item-button">
+                            Join
+                        </div>
+                    </div>
+                <% }); %>
+
+				
+
+
+				
+
+				
+			
+				
+
+
+      
+
+
+  		</div>
+		
+
+  </body>
+
+</html>

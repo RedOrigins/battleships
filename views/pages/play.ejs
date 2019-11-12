@@ -1,18 +1,56 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset = "utf-8">
+    <meta charset="UTF-8">
     <title> Play </title>
-    <link rel = "stylesheet" href = "css/style.css">
-    <link rel = "stylesheet" href = "css/playframe.css">
+    <script language="javascript" type="text/javascript" src="libs/p5.js"></script>
+    <script language="javascript" type="text/javascript" src="libs/socketio.js"></script>
+    <script>
+
+    var username = "<%= username %>";
+
+    function getUrlVars() {
+        var vars = {};
+        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+            vars[key] = value;
+        });
+        return vars;
+    }
+    
+    var gameId = getUrlVars()["game"];
+    var creator = getUrlVars()["creator"]
+    
+    var socket;
+
+    function setup() {
+        createCanvas(600, 600);
+        background(50);
+        socket = io.connect('http://10.99.99.131:3000/', { query: "username="+username+"&"+"creator="+creator+"&"+"gameId="+gameId });
+        socket.on('mouse', function(data) {
+            noStroke();
+            fill(0,0,255);
+            ellipse(data.x, data.y, 20,20);
+        })
+    }
+    
+    function mouseDragged() {
+        fill(255);
+        noStroke();
+        ellipse(mouseX, mouseY, 20, 20);
+        sendMouse(mouseX, mouseY);
+    }
+    
+    function sendMouse(xpos, ypos) {
+        var data = {
+            x: xpos,
+            y: ypos,
+            gameId : gameId
+        };
+        
+        socket.emit('mouse', data);
+    }
+
+    </script>
+    <style> body {padding: 0; margin: 0; background: #000000; overflow-x:hidden; overflow-y: hidden} </style>
 </head>
-<body>
-    <div class = "headerBox">
-        <a id = "index" href = "index.html">Board.Ships() </a>
-        <h2>User:</h2>
-    </div>
-        <div class = "play-frame">
-        <h1> Play </h1>
-    </div>
-</body>
 </html>
