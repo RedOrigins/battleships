@@ -38,7 +38,6 @@ function createGameObject(id) {
 
 io.on('connection', function (socket) {
 
-
     // Handle game stuff here
     // Data is the gameid
     socket.on('play-game', id => {
@@ -134,16 +133,6 @@ io.on('connection', function (socket) {
             
         }
     });
-
-
-
-
-
-
-
-
-
-
 
     socket.on('mouse', data => {
         socket.to(data.id).emit("mouse", {x:data.x, y:data.y});
@@ -282,13 +271,6 @@ function loginUser(username, password) {
         })
 }
 
-
-
-
-
-
-
-
 function getDateTime() {
     let date_ob = new Date();
     let year = date_ob.getFullYear();
@@ -298,7 +280,3 @@ function getDateTime() {
     let minute = ("0" + date_ob.getMinutes()).slice(-2);
     return registerDate = year + "-" + month + "-" + day + " " + hour + ":" + minute;
 }
-
-
-
-
