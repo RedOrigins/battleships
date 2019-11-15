@@ -12,10 +12,10 @@
             uName = $("#uNameInp").val();
             uPass = $("#uPassInp").val();
             $.post("/login", {username:uName, password:uPass}, function(data) {
-                if (data === "No") {
-                    console.log("Incorrect Password");
-                } else if (data === "Error") {
-                    console.log("Unknown username.");
+                if (data === "incorrect-password") {
+                    $("#error-Box").text("Error: Incorrect password!");
+                } else if (data === "unknown-username") {
+                    $("#error-Box").text("Error: Unknown username!");
                 } else {
                     window.location.href = '/';
                 }
@@ -44,6 +44,7 @@
         </div>
         <input id="loginBtn" class="submit-frame" type="submit" name="" value="Enter">     
         <a id="mvRegisterBtn" class = "new-frame" type = "button">New Account</a>
+        <div id = "error-Box"></div>
     </div>
 </body>
 </html>   

@@ -1,13 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title> Play </title>
-    <script language="javascript" type="text/javascript" src="libs/p5.js"></script>
+    <meta charset = "utf-8">
+    <title> Nav </title>
+    <link rel = "stylesheet" href = "css/style.css">
+	<link rel = "stylesheet" href = "css/play.css">
+    <link href="https://fonts.googleapis.com/css?family=Lato&display=swap" rel="stylesheet">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script language="javascript" type="text/javascript" src="libs/socketio.js"></script>
     <script>
 
+    var socket = io();
     var username = "<%= username %>";
+    var gameId = getUrlVars()["game"];
+    var creator = getUrlVars()["creator"];
+
+    $(document).ready(function() {
+        $("#mv-home-btn").click(function() {
+            window.location.href = '/'
+        });
+        $("#chat-box-button").click(function() {
+            let entry = $("#chat-box-input").val();
+            if (entry && !entry.includes("<")) {
+                $("#chat-box-input").val("");
+                socket.emit("message",  {room:gameId, content:entry, sender:username});
+                let html = '<div class = "chat-box-item">'+username+': '+entry+'</div>';
+                $("#chat-box-frame").append(html);
+                var chatBox = document.getElementById("chat-box-frame");
+                chatBox.scrollTop = 10000000000;
+            }
+        });
+        $("#gameFrame").attr("src", "game/index.html?game="+gameId);
+    });
 
     function getUrlVars() {
         var vars = {};
@@ -16,41 +40,36 @@
         });
         return vars;
     }
-    
-    var gameId = getUrlVars()["game"];
-    var creator = getUrlVars()["creator"]
-    
-    var socket;
 
-    function setup() {
-        createCanvas(600, 600);
-        background(50);
-        socket = io.connect('http://10.99.99.131:3000/', { query: "username="+username+"&"+"creator="+creator+"&"+"gameId="+gameId });
-        socket.on('mouse', function(data) {
-            noStroke();
-            fill(0,0,255);
-            ellipse(data.x, data.y, 20,20);
-        })
-    }
     
-    function mouseDragged() {
-        fill(255);
-        noStroke();
-        ellipse(mouseX, mouseY, 20, 20);
-        sendMouse(mouseX, mouseY);
-    }
-    
-    function sendMouse(xpos, ypos) {
-        var data = {
-            x: xpos,
-            y: ypos,
-            gameId : gameId
-        };
-        
-        socket.emit('mouse', data);
-    }
 
+    socket.emit('join-room', gameId);
+
+    socket.on('message', function(data) {
+        let html = '<div class = "chat-box-item">'+data.sender+': '+data.content+'</div>';
+        $("#chat-box-frame").append(html);
+        var chatBox = document.getElementById("chat-box-frame");
+        chatBox.scrollTop = 10000000000;
+    });
+    
     </script>
-    <style> body {padding: 0; margin: 0; background: #000000; overflow-x:hidden; overflow-y: hidden} </style>
 </head>
+<body>
+	<div class = "headerBox">
+		<a id = "mv-home-btn" class = "index" href = "#">Board.Ships() </a>
+		<h2>User: <%= username %></h2>
+    </div>
+	<h1 id= "play-label"> Play </h1>
+    <div class = "play-frame">
+		<div id ="play-frame-border">
+            <iframe id="gameFrame" width=100% height=100% frameBorder="0"></iframe>
+        </div>
+        <div id = "chat-box-frame">
+		</div>
+		<div id = "chat-box-bottom">
+            <input id = "chat-box-input" type = "text" placeholder = "Enter..." maxlength="50" />
+            <a id = "chat-box-button" type = "button"> Send</a>
+       </div>
+    </div>
+</body>
 </html>

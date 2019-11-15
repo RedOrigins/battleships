@@ -14,8 +14,8 @@
             uPassRe = $("#uPassReInp").val();
             if (uPass === uPassRe) {
                 $.post("/register",{username: uName, password: uPass}, function(data) {
-                    if (data === "error") {
-                        console.log("Error registering account");
+                    if (data === "Error Creating User") {
+                        $("#error-Box").text("Error: Username already in use!");
                     } else {
                         $.post("/login", {username: uName, password: uPass}, function() {
                             window.location.href = '/';
@@ -23,7 +23,7 @@
                     }
                 }); 
             } else {
-                console.log("Passwords do not match!");
+                $("#error-Box").text("Error: Passwords do not match!");
             }
             
         });
@@ -46,6 +46,8 @@
         <div class="text-box", id="usernameBox">
         <input id="uNameInp" class="text-box-input" type="text" name="" value="" placeholder="Display Name" maxlength="18">
     </div>
+    <div id = "error-Box"></div>
+    
     <div class="text-box" id="passwordBox">
         <input id="uPassInp" class="text-box-input" type="password" name="" value="" placeholder="Password" maxlength="18">
     </div>

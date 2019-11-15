@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>p5.js template</title>
+    <style> body {padding: 0; margin: 0;} </style>
+	<link rel="stylesheet" href="style.css">
+    <script src="../libs/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+    <script>
+    var socket = io();
+
+
+    function getUrlVars() {
+        var vars = {};
+        var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+            vars[key] = value;
+        });
+        return vars;
+    }
+    
+    var gameId = getUrlVars()["game"];
+    socket.emit('play-game', gameId);
+
+    function setup() {
+        createCanvas(1350, 500);
+        background(50);
+        
+    }
+    socket.on('mouse', newDrawing);
+    function newDrawing(data) {
+        noStroke();
+        fill(0,0,255);
+        ellipse(data.x, data.y, 36);
+    }
+
+    function mouseDragged() {
+    
+        var data = {
+            x: mouseX,
+            y: mouseY,
+            id: gameId
+        }
+
+        socket.emit('mouse', data);
+
+        noStroke();
+        fill(255);
+        ellipse(mouseX, mouseY, 36);
+        
+    }
+
+</script>
+</head>
+<body>
+</body>
+</html>
