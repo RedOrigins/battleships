@@ -46,16 +46,21 @@ io.on('connection', function (socket) {
 		let gameFound = false;
 		for (let i=0; i<activeGames.length; i++) {
 			if (activeGames[i].id == gameId) {
-				gameFound = true;
-                activeGames[i].joinerConn = socket.id;
-                io.to(activeGames[i].creatorConn).emit("place-ships", "go");
-                io.to(activeGames[i].joinerConn).emit("place-ships", "go");
+                gameFound = true;
+                if (!activeGames[i].joinerConn) {
+                    activeGames[i].joinerConn = socket.id;
+                    console.log("Game with id : " + gameId + " has started!")
+                    io.to(activeGames[i].creatorConn).emit("place-ships", "go");
+                    io.to(activeGames[i].joinerConn).emit("place-ships", "go"); 
+                }
+                
 			}
 		}
 		if (!gameFound) {
 			let newGame = createGameObject(gameId);
 			newGame.creatorConn = socket.id;
-			activeGames.push(newGame);
+            activeGames.push(newGame);
+            console.log("Game with id : " + gameId + " has been created!")
         }
     });
 
@@ -68,11 +73,9 @@ io.on('connection', function (socket) {
                 if (socket.id == activeGames[i].creatorConn && activeGames[i].creatorBoard == undefined) {
                     // IF THE PERSON IS THE CREATOR AND THEIR BOARD IS EMPTY
                     activeGames[i].creatorBoard = data.board;
-                    console.log(activeGames[i]);
                 } else if (socket.id == activeGames[i].joinerConn && activeGames[i].joinerBoard == undefined) {
                     // IF THE PERSON IS THE JOINER AND THEIR BOARD IS EMPTY
                     activeGames[i].joinerBoard = data.board;
-                    console.log(activeGames[i]);
                 }
                 if (activeGames[i].creatorBoard && activeGames[i].joinerBoard) {
                     // IF BOTH BOARDS ARE PLACED
@@ -80,7 +83,7 @@ io.on('connection', function (socket) {
                     io.to(activeGames[i].creatorConn).emit("start-game", "go");
                     io.to(activeGames[i].creatorConn).emit("start-turn", "go");
                     io.to(activeGames[i].joinerConn).emit("start-game",  "go");
-                    console.log(activeGames[i]);
+                    console.log("Game with id : " + activeGames[i].id + " has entered shooting phase!")
                 }
             }
         }
@@ -117,17 +120,19 @@ io.on('connection', function (socket) {
                     }
                     io.to(activeGames[i].creatorConn).emit("shot-fired",  {x:data.x, y:data.y});
                     io.to(activeGames[i].creatorConn).emit("start-turn", "go");
-                    activeGames[i].currentTurn = "joiner";
+                    activeGames[i].currentTurn = "creator";
                     activeGames[i].round++;
                 }
                 if (activeGames[i].joinerShipsRemaining <= 0) {
                     //! Creator Wins
                     io.to(activeGames[i].creatorConn).emit("game-over",  {rounds: activeGames[i].round, winner:true});
                     io.to(activeGames[i].joinerConn).emit("game-over",  {rounds: activeGames[i].round, winner:false});
+                    console.log("Game with id : " + activeGames[i].id + " has ended with creator as the winner!")
                 } else if (activeGames[i].creatorShipsRemaining <= 0) {
                     //! Joiner Wins
                     io.to(activeGames[i].creatorConn).emit("game-over",  {rounds: activeGames[i].round, winner:false});
                     io.to(activeGames[i].joinerConn).emit("game-over",  {rounds: activeGames[i].round, winner:true});
+                    console.log("Game with id : " + activeGames[i].id + " has ended with joiner as the winner!")
                 }
             }
             
@@ -141,7 +146,6 @@ io.on('connection', function (socket) {
     // Lobby room is the playindex page
     socket.on("join-room", room => {
         socket.join(room);
-        console.log("Socket with id : "+ socket.id + " joined room : " + room);
         if (room == 'lobby') {
             for (let i=0; i<openGames.length; i++) {
                 socket.emit("new-game", {creator:openGames[i].creator, id:openGames[i].id})
